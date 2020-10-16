@@ -33,6 +33,7 @@ function uploadAudioFileFromMenu(fileContainer, onLoadExtractor) {
     // }
    
     addToAudioPlayer(blob);
+    getTempoAsync(URL.createObjectURL(blob))
     // if (myAppSettings.audioLoaded) { removeAudioButtons() };
   
     // var blobUrl = URL.createObjectURL(blob);
