@@ -5,11 +5,13 @@
 	<meta name="author" content="Len Vande Veire, Raphael Romero, Mickael Zehren, Alex de Raadt">
 	<title>DJ mix analyzer prototype for HAMR @ ISMIR 2020</title>
 	<!-- Bootstrap core CSS -->
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<!-- Latest compiled and minified JavaScript -->
 	<!--Popper.js, jQuery, bootstrap js-->
 	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js" integrity="sha384-w1Q4orYjBQndcko6MimVbzY0tgp4pWB4lZ7lr30WKz0vr/aWKhXdBNmNb5D92v7s" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 	<!--Waveform visualization-->
 	<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/mediaelement/4.2.16/mediaelement-and-player.min.js"></script> -->
 	<script src="https://unpkg.com/wavesurfer.js"></script>
@@ -28,27 +30,30 @@
 				<input id="file-input" type="file" name="name" style="display: none;" />
 			</p>
 		</section>
-		<div>
-			<div id="waveform"></div>
-		</div>
 
-		<div id="audio-obj" class="ui row" style="margin-bottom: 40px;">
-            <center>
-                <audio id="audio-div" controls>
-                    <source id="audio-source" src="" type="audio/wav"/>
-                </audio>
-            </center>
-        </div>
+		<center>
+		<section class="text-center">
+			<div id="audio-obj">
+	            <center>
+	                <audio id="audio-div" controls>
+	                    <source id="audio-source" src="" type="audio/wav"/>
+	                </audio>
+	            </center>
+	        </div>
 
-		<div class="controls">
-            <button class="btn btn-primary" data-action="play">
-                <i class="glyphicon glyphicon-play"></i>
-                Play
-                /
-                <i class="glyphicon glyphicon-pause"></i>
-                Pause
-            </button>
-        </div>
+			<div class="controls">
+	            <button class="btn btn-primary" data-action="play" id="audio-seek-backward">
+	                <span class="glyphicon glyphicon-backward"></span>
+	            </button>
+	            <button class="btn btn-primary" data-action="play" id="audio-seek-forward">
+	                <span class="glyphicon glyphicon-forward"></span>
+	            </button>
+	        </div>
+        </section>
+        </center>
 	</main>
+	<footer class="text-center">
+		<p class="text-muted">Using icons from <a href="http://glyphicons.com/">http://glyphicons.com/</a></p>
+	</footer>
 </body>
 </html>
