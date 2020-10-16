@@ -1,0 +1,6 @@
+# ignoring dev files
+.vscode
+.DS_Store
+
+
+essentia-hello/test-5min.mp3
