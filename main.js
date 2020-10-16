@@ -31,9 +31,10 @@ function uploadAudioFileFromMenu(fileContainer, onLoadExtractor) {
     //     alert("Too big file to process! Please a upload a audio file less than " + FILE_UPLOAD_SIZE_LIMIT + "mb!");
     //     throw "Excedees maximum upload file size limit " + FILE_UPLOAD_SIZE_LIMIT + "mb!";
     // }
-   
-    addToAudioPlayer(blob);
-    getTempoAsync(URL.createObjectURL(blob))
+
+    var blobUrl = URL.createObjectURL(blob);
+    addToAudioPlayer(blobUrl);
+    getEnergy(blobUrl);
     // if (myAppSettings.audioLoaded) { removeAudioButtons() };
   
     // var blobUrl = URL.createObjectURL(blob);
@@ -60,8 +61,7 @@ function addSourceToAudioPlayer(url) {
 }
 
 
-function addToAudioPlayer(blob) {
-    var blobUrl = URL.createObjectURL(blob);
+function addToAudioPlayer(blobUrl) {
     addSourceToAudioPlayer(blobUrl);
 }
 

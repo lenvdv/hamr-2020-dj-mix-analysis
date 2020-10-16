@@ -20,6 +20,8 @@
 	<script src="https://unpkg.com/wavesurfer.js"></script>
 	<script src="main.js"></script>
 	<script src="essentiaProxy.js"></script>
+	<!--Load d3.js-->
+	<script src="https://d3js.org/d3.v4.js"></script>
 </head>
 <body>
 	<header></header>
@@ -35,7 +37,6 @@
 			</p>
 		</section>
 
-		<center>
 		<section class="text-center">
 			<div id="audio-obj">
 	            <center>
@@ -54,7 +55,8 @@
 	            </button>
 	        </div>
         </section>
-        </center>
+
+		<div id="myDataViz"></div>
 	</main>
 	<footer class="text-center">
 		<p class="text-muted">Using icons from <a href="http://glyphicons.com/">http://glyphicons.com/</a></p>
