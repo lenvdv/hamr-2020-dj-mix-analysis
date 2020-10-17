@@ -20,15 +20,19 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log(myPlot)
 
     myPlot.on('plotly_click', function(data){
-        var pts = '';
-        for(var i=0; i < data.points.length; i++){
-            pts = 'x = '+data.points[i].x +'\ny = '+
-                data.points[i].y.toPrecision(4) + '\n\n';
-        }
-        console.log(pts)
-        alert('Closest point clicked:\n\n'+pts);
+        var x = data.points[0].x
+        console.log('Clicked on '+x);
+        audioJumpTo(x);
     });
 });
+
+function audioJumpTo(time_as_ratio){
+    var time = time_as_ratio * audioplayer.duration;
+    console.log('Current time of audio: ' + audioplayer.currentTime);
+    console.log('Duration of audio: ' + audioplayer.duration);
+    audioplayer.currentTime = time;
+    console.log('Set time of audio to ' + audioplayer.currentTime);
+}
 
 function audioSeek(amount){
     console.log('Current time of audio: ' + audioplayer.currentTime);
