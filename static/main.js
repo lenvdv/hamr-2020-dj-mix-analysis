@@ -27,6 +27,9 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function audioJumpTo(time_as_ratio){
+    // Jump to a time in the audio
+    //   time_to_ratio should be a _relative_ starting point,
+    //   0.0 being the start of the audio, 0.5 being halfway, 1.0 being the end.
     var time = time_as_ratio * audioplayer.duration;
     console.log('Current time of audio: ' + audioplayer.currentTime);
     console.log('Duration of audio: ' + audioplayer.duration);
@@ -35,6 +38,7 @@ function audioJumpTo(time_as_ratio){
 }
 
 function audioSeek(amount){
+    // Jump forwards or backwards in the music by increments of "amount" seconds. Amount can be negative.
     console.log('Current time of audio: ' + audioplayer.currentTime);
     audioplayer.currentTime += amount; 
     console.log('Set time of audio to ' + audioplayer.currentTime);
