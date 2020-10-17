@@ -12,8 +12,12 @@ from essentia.standard import *
 from essentia.streaming import *  # Use streaming mode to deal with long files (mixes)
 from pylab import plot, show, figure, imshow
 from scipy.signal import savgol_filter
+import pandas as pd
+import plotly.express as px
+import plotly.graph_objs as go
 
-def process_file(input_path=None):
+
+def process_file(input_path=None, output_path=None):
 
     file = input_path
     sample_rate = librosa.get_samplerate(file)
@@ -100,25 +104,48 @@ def process_file(input_path=None):
 
     toplot = energy_band_features / np.max(energy_band_features, axis=0)[np.newaxis, :]
     toplot = toplot / np.sum(toplot, axis=1)[:, np.newaxis]
-    yhat = savgol_filter(toplot, 61, 3, axis=0)  # smooth the output a bit
+    yhat = savgol_filter(toplot, 15, 3, axis=0)  # smooth the output a bit
 
-    # plt.figure()
-    # plt.plot(yhat)
-    # plt.show()
-    #
-    # plt.figure()
-    # plt.plot(toplot)
-    # plt.show()
+    df = pd.DataFrame(data=toplot)
 
-    return yhat
+    return plot_data(df, output_path)
+
+
+
+def plot_data(df,
+              output_path,
+              colorscale=px.colors.sequential.Cividis_r):
+
+    print("Plotting the features....")
+    fig = go.Figure()
+    for i, (key, descr) in enumerate(df.iteritems()):
+        fig.add_trace(go.Scatter(
+            x=df.index, y=descr,
+            hoverinfo='x+y',
+            mode='lines',
+            line=dict(width=0.5, color=colorscale[i]),
+            stackgroup='one', # define stack group,
+            name="Energy Band Level {}".format(i)
+        ))
+
+
+    fig.update_layout(yaxis_range=(0, 1))
+
+    with open (output_path, 'w') as f:
+        f.write(fig.to_html())
+    print("Done! Result saved into file {}".format(output_path))
+
+    return output_path
 
 
 
 if(__name__ == "__main__"):
     parser = argparse.ArgumentParser(description="Analyze dj mix")
     parser.add_argument('-i', '--input_path',
+                        default='data/test_frame.mp3',
                         help="Path of the audio files")
     parser.add_argument('-o', '--output_path',
+                        default='data/output.html',
                         help="Path where to store the data frame")
 
     args = parser.parse_args()

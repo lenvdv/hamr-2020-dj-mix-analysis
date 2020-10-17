@@ -25,16 +25,16 @@ def upload_file():
     if uploaded_file.filename != '':
         filepath = os.path.join(app.config['UPLOAD_PATH'], uploaded_file.filename)
         uploaded_file.save(filepath)
-        yhat = process_file(filepath)
-    return render_template('index.html', data_visualization=yhat, audio_url=f'/uploads/{uploaded_file.filename}')
+        output_path = process_file(filepath, app.config['UPLOAD_PATH'])
+    return render_template('index.html', data_visualization=f'/uploads/{os.path.basename(output_path)}', audio_url=f'/uploads/{uploaded_file.filename}')
     # return redirect(url_for('index', viz=str(yhat), audio_url=f'/uploads/{uploaded_file.filename}'))
 
-@app.route('/get-result')
-def get_result():
-    if not executor.futures.done('calc_power'):
-        return jsonify({'status': executor.futures._state('calc_power')})
-    future = executor.futures.pop('calc_power')
-    return jsonify({'status': done, 'result': future.result()})
+# @app.route('/get-result')
+# def get_result():
+#     if not executor.futures.done('calc_power'):
+#         return jsonify({'status': executor.futures._state('calc_power')})
+#     future = executor.futures.pop('calc_power')
+#     return jsonify({'status': done, 'result': future.result()})
 
 @app.route('/uploads/<filename>')
 def upload(filename):
