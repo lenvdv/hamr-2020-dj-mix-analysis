@@ -103,7 +103,7 @@ def main(input_path=None,
 
     toplot = energy_band_features / np.max(energy_band_features, axis=0)[np.newaxis, :]
     toplot = toplot / np.sum(toplot, axis=1)[:, np.newaxis]
-    # yhat = savgol_filter(toplot, 15, 3, axis=0)  # smooth the output a bit
+    yhat = savgol_filter(toplot, 15, 3, axis=0)  # smooth the output a bit
 
 
 
@@ -111,12 +111,6 @@ def main(input_path=None,
 
     plot_data(df, output_path)
 
-    #
-    # plt.figure()
-    # plt.plot(toplot)
-    # # plt.plot(toplot, linestyle=':')
-    # plt.show()
-    #
 
 
 def plot_data(df,
@@ -134,21 +128,6 @@ def plot_data(df,
             stackgroup='one', # define stack group,
             name="Energy Band Level {}".format(i)
         ))
-    # fig.add_trace(go.Scatter(
-    #     x=df.index, y=df['ebf_2'],
-    #     hoverinfo='x+y',
-    #     mode='lines',
-    #     line=dict(width=0.5, color=2),
-    #     stackgroup='one',
-    #     name = "Energy Band Level 2"
-    # ))
-    # fig.add_trace(go.Scatter(
-    #     x=df.index, y=df['ebf_3'],
-    #     hoverinfo='x+y',
-    #     mode='lines',
-    #     line=dict(width=0.5, color=3),
-    #     stackgroup='one',
-    #     name = "Energy Band Level"))
 
     fig.update_layout(yaxis_range=(0, 1))
 
