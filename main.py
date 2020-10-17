@@ -28,10 +28,22 @@ def main(input_path=None,
     logging.info(f'Sample rate: {sample_rate}')
     # Load the audio as a stream
     danceability_extractor = essentia.standard.Danceability()
+    energy_band_params = [
+        {'sampleRate' : sample_rate, 'startCutoffFrequency' : 20, 'stopCutoffFrequency' : 200},
+        {'sampleRate' : sample_rate, 'startCutoffFrequency' : 200, 'stopCutoffFrequency' : 1000},
+        {'sampleRate' : sample_rate, 'startCutoffFrequency' : 1000, 'stopCutoffFrequency' : 2000},
+    ]
+    energy_band_extractors = [
+        essentia.standard.EnergyBand(**kwargs) for kwargs in energy_band_params
+    ]
+
     danceability = []
+    energy_band_features = []
     for i, y_block in enumerate(stream):
         logging.debug(f'Processing block {i}')
-        danceability.append(danceability_extractor(y_block)[0])
+        # danceability.append(danceability_extractor(y_block)[0])
+        S = librosa.stft(y_block)
+        spectrum_avg = np.aveg
     danceability = np.array(danceability)
     logging.info(f'Danceability: {danceability.shape}')
 
