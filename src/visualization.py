@@ -45,7 +45,6 @@ def plot_spectral_comp(df, outpath):
         stackgroup='one', # define stack group,
         name="Spectral Complexity"
     ))
-    import ipdb; ipdb.set_trace()
 
     fig.update_layout(title='Spectral Complexity',
                       xaxis_title="Time",
