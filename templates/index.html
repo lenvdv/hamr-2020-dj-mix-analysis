@@ -18,8 +18,8 @@
 	<!--Waveform visualization-->
 	<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/mediaelement/4.2.16/mediaelement-and-player.min.js"></script> -->
 	<script src="https://unpkg.com/wavesurfer.js"></script>
-	<script src="main.js"></script>
-	<script src="essentiaProxy.js"></script>
+	<script src="../static/main.js"></script>
+	<script src="../static/essentiaProxy.js"></script>
 </head>
 <body>
 	<header></header>
@@ -30,19 +30,18 @@
 			</div>
 			<p class="lead text-muted">Some info here</p>
 			<p>
-				<button class="btn btn-primary" onclick="document.getElementById('file-input').click();">Upload DJ mix</button>
-				<input id="file-input" type="file" name="name" style="display: none;" />
+				<form method="POST" action="" enctype="multipart/form-data">
+					<p><input type="file" name="file" accept=".mp3,.wav"></p>
+					<p><input type="submit" class="btn btn-primary" value="Submit"></p>
+				</form>
 			</p>
 		</section>
 
-		<center>
 		<section class="text-center">
 			<div id="audio-obj">
-	            <center>
-	                <audio id="audio-div" controls>
-	                    <source id="audio-source" src="" type="audio/wav"/>
-	                </audio>
-	            </center>
+				<audio id="audio-div" controls>
+					<source id="audio-source" src="" type="audio/wav"/>
+				</audio>
 	        </div>
 
 			<div class="controls">
@@ -54,7 +53,12 @@
 	            </button>
 	        </div>
         </section>
-        </center>
+
+		<section>
+			<div id="data-visualization">
+				{{data_visualization}}
+			</div>
+		</section>
 	</main>
 	<footer class="text-center">
 		<p class="text-muted">Using icons from <a href="http://glyphicons.com/">http://glyphicons.com/</a></p>
