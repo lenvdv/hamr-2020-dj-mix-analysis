@@ -24,9 +24,9 @@ def main(input_path=None,
     # Declare audio loading stream and related parameters
     # ================================================
 
-    frame_length = sample_rate * 24
-    hop_length = sample_rate * 8
-    block_length = 5
+    frame_length = sample_rate * 60
+    hop_length = sample_rate * 5
+    block_length = 5 * 4
     # Load the audio as a stream
     stream = librosa.stream(file,
                             block_length=block_length,
@@ -95,11 +95,14 @@ def main(input_path=None,
 
     toplot = energy_band_features / np.max(energy_band_features, axis=0)[np.newaxis, :]
     toplot = toplot / np.sum(toplot, axis=1)[:, np.newaxis]
-    yhat = savgol_filter(toplot, 15, 3, axis=0)  # smooth the output a bit
+    yhat = savgol_filter(toplot, 61, 3, axis=0)  # smooth the output a bit
 
     plt.figure()
     plt.plot(yhat)
-    # plt.plot(toplot, linestyle=':')
+    plt.show()
+
+    plt.figure()
+    plt.plot(toplot)
     plt.show()
 
 
