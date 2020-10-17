@@ -8,6 +8,7 @@ import sys
 import time
 
 from essentia.standard import *
+from essentia.streaming import *  # Use streaming mode to deal with long files (mixes)
 from pylab import plot, show, figure, imshow
 
 
@@ -21,15 +22,27 @@ def main(input_path=None,
 
     # Loading
     t0 = time.time()
-    # we start by instantiating the audio loader:
-    loader = essentia.standard.MonoLoader(filename=file)
+    # Load the audio in mono
+    loader = essentia.streaming.MonoLoader(filename=file)
+    # Framecutter
+    frame_cutter = essentia.streaming.FrameCutter(frameSize=44100 * 30, hopSize=44100 * 60)
+    w = essentia.streaming.Windowing(type='hann')
+    # Estimate danceability
+    danceability = essentia.standard.Danceability()
+    # Outputs
+    pool = essentia.Pool()
 
-    # and then we actually perform the loading:
-    audio = loader()
+    # Connect everything
+    loader.audio >> frame_cutter.signal
+    frame_cutter.frame >> w.frame >> (pool, 'frames')
 
-    logging.info("Audio loaded, time elapsed: {} ".format(time.time() - t0))
-    logging.info("Duration of the audio file {} minutes".format(audio.shape[0] / (sample_rate * 60)))
+    #>> danceability.signal
+    # danceability.danceability >> (pool, 'danceability')
 
+    logging.info('Connected everything, starting the processing!')
+    essentia.run(loader)
+
+    print(len(pool['frames']))
 
 def extract_desciptors(audio,
                        frame_size = 44100 * 60,
