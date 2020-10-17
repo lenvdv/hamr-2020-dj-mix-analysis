@@ -11,6 +11,7 @@ import time
 from essentia.standard import *
 from essentia.streaming import *  # Use streaming mode to deal with long files (mixes)
 from pylab import plot, show, figure, imshow
+from scipy.signal import savgol_filter
 
 def main(input_path=None,
          output_path=None):
@@ -19,73 +20,86 @@ def main(input_path=None,
     sample_rate = librosa.get_samplerate(file)
     logging.info(f'Starting analysis of {file}')
 
-    # Declare audio loading stream
+    # ================================================
+    # Declare audio loading stream and related parameters
+    # ================================================
+
+    frame_length = sample_rate * 24
+    hop_length = sample_rate * 8
+    block_length = 5
+    # Load the audio as a stream
     stream = librosa.stream(file,
-                            block_length=1,
-                            frame_length=sample_rate * 20,
-                            hop_length=sample_rate*10
+                            block_length=block_length,
+                            frame_length=frame_length,
+                            hop_length=hop_length,
                             )
     logging.info(f'Sample rate: {sample_rate}')
-    # Load the audio as a stream
-    danceability_extractor = essentia.standard.Danceability()
+
+    # ================================================
+    # Define features to extract
+    # ================================================
+
     energy_band_params = [
         {'sampleRate' : sample_rate, 'startCutoffFrequency' : 20, 'stopCutoffFrequency' : 200},
         {'sampleRate' : sample_rate, 'startCutoffFrequency' : 200, 'stopCutoffFrequency' : 1000},
         {'sampleRate' : sample_rate, 'startCutoffFrequency' : 1000, 'stopCutoffFrequency' : 2000},
     ]
+
+    def hz_to_bin(f, n_bins, sr):
+        return int(np.round((f / sr) * n_bins))
+
+    class EnergyBandSelf:
+
+        ''' Feature extraction class that extracts the energy in a frequency band, given a power STFT spectrogram.'''
+
+        def __init__(self, sampleRate=44100, startCutoffFrequency=20.0, stopCutoffFrequency=11025.0):
+            self.sr = sampleRate
+            self.f_start = startCutoffFrequency
+            self.f_stop = stopCutoffFrequency
+
+        def __call__(self, S_power):
+            n_bins = S_power.shape[0]
+            n_start, n_stop = hz_to_bin(self.f_start, n_bins, self.sr), hz_to_bin(self.f_stop, n_bins, self.sr)
+            return np.sum(S_power[n_start:n_stop, :])
+            # return np.median(np.sum(S_power[n_start:n_stop, :], axis=0))
+
     energy_band_extractors = [
-        essentia.standard.EnergyBand(**kwargs) for kwargs in energy_band_params
+        EnergyBandSelf(**kwargs) for kwargs in energy_band_params
     ]
 
-    danceability = []
+    # ================================================
+    # Feature extraction
+    # ================================================
     energy_band_features = []
+
+    # Read the librosa docs to understand how the blocks and frames relate to each other:
+    # https://librosa.org/blog/2019/07/29/stream-processing/#Blocks
     for i, y_block in enumerate(stream):
-        logging.debug(f'Processing block {i}')
-        # danceability.append(danceability_extractor(y_block)[0])
-        S = librosa.stft(y_block)
-        spectrum_avg = np.aveg
-    danceability = np.array(danceability)
-    logging.info(f'Danceability: {danceability.shape}')
+        for j, n_start in enumerate(range(0,len(y_block), hop_length)):
+            if j == 0 and i % 5 == 0:
+                logging.info(
+                    f'Processing from minute {(j * hop_length + i * block_length * hop_length)/(60*sample_rate)}.')
+            # Select the current audio frame
+            y_frame = y_block[..., n_start:n_start+hop_length]
+            # Calculate the STFT power spectrogram for this audio frame
+            S = np.abs(librosa.stft(y_frame))**2
+            # Calculate the energy in each of the predefined energy bands
+            energy_band_features.append([e(S) for e in energy_band_extractors])
+    # Back to a numpy array
+    energy_band_features = np.array(energy_band_features)
+
+    # ================================================
+    # Plotting
+    # ================================================
+    
+    toplot = energy_band_features / np.max(energy_band_features, axis=0)[np.newaxis, :]
+    yhat = savgol_filter(toplot, 15, 3, axis=0)  # smooth the output a bit
 
     plt.figure()
-    plt.plot(danceability)
+    plt.plot(yhat)
+    # plt.plot(toplot, linestyle=':')
     plt.show()
 
-def extract_desciptors(audio,
-                       frame_size = 44100 * 60,
-                       descriptors = ['lowlevel.average_loudness', 'tonal.tuning_frequency', 'lowlevel.dissonance.mean']):
-    # 1 Mn frames
-    musex = es.MusicExtractor(lowlevelStats=['mean', 'stdev'],
-                                              rhythmStats=['mean', 'stdev'],
-                                              tonalStats=['mean', 'stdev'])
-
-    frame_size = sample_rate * 1024
-    frame_gen = FrameGenerator(audio, frameSize=frame_size, hopSize=512, startFromZero=True)
-    frame_path = 'data/tmp.mp3'
-    writer = MonoWriter(filename=frame_path)
-
-    result = pd.DataFrame(index = np.arange(frame_gen.num_frames()), columns = descriptors)
-
-    for i, frame in enumerate(frame_gen):
-
-        writer(frame)
-        features, features_frames = musex(frame_path)
-        for descr in descriptors:
-            result.loc[i, descr] = features[descr]
-
-def plot_audio(frame):
-    frame = frame_gen.next()
-    # pylab contains the plot() function, as well as figure, etc... (same names as Matlab)
-
-    plt.rcParams['figure.figsize'] = (15, 6) # set plot sizes to something larger than default
-
-
-    timestamps = np.arange(frame.shape[0]) / 44100
-    plot(timestamps, frame)
-
-    plt.title("This is how the first 60 seconds of this audio looks like:")
-    plt.xlabel("Time")
-    show() # unnecessary if you started "ipython --pylab"
 
 
 if(__name__ == "__main__"):
