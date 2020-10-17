@@ -8,14 +8,6 @@ import os
 import sys
 import time
 
-from essentia.standard import *
-from essentia.streaming import *  # Use streaming mode to deal with long files (mixes)
-from pylab import plot, show, figure, imshow
-from scipy.signal import savgol_filter
-import pandas as pd
-import plotly.express as px
-import plotly.graph_objs as go
-
 from src.feature_extraction import extract_loudness,extract_energy_bands, extract_spectral_complexity
 from src.visualization import plot_energy_band, plot_loudness, plot_spectral_comp
 
@@ -37,10 +29,6 @@ def process_file(
     plot_energy_band(energy_band_df, outpath=output_file_energy)
 
     return [output_file_energy, output_file_sc]
-    #
-    # # Loudness
-    # loudness_df = extract_loudness(input_path)
-    # plot_loudness(loudness_df, outpath=os.path.join(output_path, "loudness.html"))
 
 
 if(__name__ == "__main__"):

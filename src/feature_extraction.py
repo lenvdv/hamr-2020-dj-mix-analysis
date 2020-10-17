@@ -7,13 +7,10 @@ import numpy as np
 import os
 import sys
 import time
-
 from essentia.streaming import *  # Use streaming mode to deal with long files (mixes)
 from pylab import plot, show, figure, imshow
 from scipy.signal import savgol_filter
 import pandas as pd
-import plotly.express as px
-import plotly.graph_objs as go
 
 def extract_energy_bands(file):
     print("Extracting energy bands...")
@@ -111,7 +108,7 @@ def extract_spectral_complexity(file):
     pool = essentia.Pool()
 
     loader = MonoLoader(filename = file)
-    frameCutter = FrameCutter(frameSize = 44100 * 60, hopSize = 44100*60)
+    frameCutter = FrameCutter(frameSize = 44100 * 20, hopSize = 5 * 44100)
     w = Windowing(type = 'hann')
     spec = Spectrum()
     mfcc = MFCC()
@@ -140,7 +137,7 @@ def extract_loudness(file):
 
     loader = MonoLoader(filename = file)
 
-    frameCutter = FrameCutter(frameSize = 44100 * 60, hopSize = 44100*60)
+    frameCutter = FrameCutter(frameSize = 44100 * 60, hopSize = 44100*5)
     loader.audio >> frameCutter.signal
 
     #Loudness
