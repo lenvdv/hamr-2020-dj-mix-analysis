@@ -40,9 +40,13 @@ def main(input_path=None,
     # ================================================
 
     energy_band_params = [
-        {'sampleRate' : sample_rate, 'startCutoffFrequency' : 20, 'stopCutoffFrequency' : 200},
-        {'sampleRate' : sample_rate, 'startCutoffFrequency' : 200, 'stopCutoffFrequency' : 1000},
-        {'sampleRate' : sample_rate, 'startCutoffFrequency' : 1000, 'stopCutoffFrequency' : 2000},
+        {'sampleRate' : sample_rate, 'startCutoffFrequency' : 20, 'stopCutoffFrequency' : 100},
+        {'sampleRate' : sample_rate, 'startCutoffFrequency' : 100, 'stopCutoffFrequency' : 200},
+        {'sampleRate' : sample_rate, 'startCutoffFrequency' : 200, 'stopCutoffFrequency' : 800},
+        {'sampleRate' : sample_rate, 'startCutoffFrequency' : 800, 'stopCutoffFrequency' : 2000},
+        {'sampleRate' : sample_rate, 'startCutoffFrequency' : 2000, 'stopCutoffFrequency' : 5000},
+        {'sampleRate' : sample_rate, 'startCutoffFrequency' : 5000, 'stopCutoffFrequency' : 8000},
+        {'sampleRate' : sample_rate, 'startCutoffFrequency' : 8000, 'stopCutoffFrequency' : 22050},
     ]
 
     def hz_to_bin(f, n_bins, sr):
