@@ -8,14 +8,6 @@ import os
 import sys
 import time
 
-from essentia.standard import *
-from essentia.streaming import *  # Use streaming mode to deal with long files (mixes)
-from pylab import plot, show, figure, imshow
-from scipy.signal import savgol_filter
-import pandas as pd
-import plotly.express as px
-import plotly.graph_objs as go
-
 from src.feature_extraction import extract_loudness,extract_energy_bands, extract_spectral_complexity
 from src.visualization import plot_energy_band, plot_loudness, plot_spectral_comp
 
@@ -27,19 +19,21 @@ def process_file(
     file_prefix = input_path.split(".wav")[0]
     if not os.path.exists(output_path):
         os.makedirs(output_path)
-    # 
-    # spectral_complexity_df = extract_spectral_complexity(input_path)
-    # plot_spectral_comp(spectral_complexity_df, outpath=os.path.join(output_path, "spectral_comp.html"))
+
+    spectral_complexity_df = extract_spectral_complexity(input_path)
+    output_file = os.path.join(output_path, "spectral_comp.html")
+    plot_spectral_comp(spectral_complexity_df, outpath=output_file)
 
     energy_band_df = extract_energy_bands(input_path)
     output_file = os.path.join(output_path, "energy_band.html")
     plot_energy_band(energy_band_df, outpath=output_file)
 
-    return output_file
     #
     # # Loudness
     # loudness_df = extract_loudness(input_path)
     # plot_loudness(loudness_df, outpath=os.path.join(output_path, "loudness.html"))
+
+    return output_file
 
 
 if(__name__ == "__main__"):
