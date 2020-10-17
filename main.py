@@ -1,5 +1,6 @@
 import argparse
 import essentia
+import librosa
 import logging
 import matplotlib.pyplot as plt
 import numpy as np
@@ -11,38 +12,32 @@ from essentia.standard import *
 from essentia.streaming import *  # Use streaming mode to deal with long files (mixes)
 from pylab import plot, show, figure, imshow
 
-
 def main(input_path=None,
          output_path=None):
 
-    audio_files = os.listdir(input_path)
-    file = os.path.join(input_path, audio_files[0])
-    sample_rate = 44100
+    file = input_path
+    sample_rate = librosa.get_samplerate(file)
     logging.info(f'Starting analysis of {file}')
 
-    # Loading
-    t0 = time.time()
-    # Load the audio in mono
-    loader = essentia.streaming.MonoLoader(filename=file)
-    # Framecutter
-    frame_cutter = essentia.streaming.FrameCutter(frameSize=44100 * 30, hopSize=44100 * 60)
-    w = essentia.streaming.Windowing(type='hann')
-    # Estimate danceability
-    danceability = essentia.standard.Danceability()
-    # Outputs
-    pool = essentia.Pool()
+    # Declare audio loading stream
+    stream = librosa.stream(file,
+                            block_length=1,
+                            frame_length=sample_rate * 20,
+                            hop_length=sample_rate*10
+                            )
+    logging.info(f'Sample rate: {sample_rate}')
+    # Load the audio as a stream
+    danceability_extractor = essentia.standard.Danceability()
+    danceability = []
+    for i, y_block in enumerate(stream):
+        logging.debug(f'Processing block {i}')
+        danceability.append(danceability_extractor(y_block)[0])
+    danceability = np.array(danceability)
+    logging.info(f'Danceability: {danceability.shape}')
 
-    # Connect everything
-    loader.audio >> frame_cutter.signal
-    frame_cutter.frame >> w.frame >> (pool, 'frames')
-
-    #>> danceability.signal
-    # danceability.danceability >> (pool, 'danceability')
-
-    logging.info('Connected everything, starting the processing!')
-    essentia.run(loader)
-
-    print(len(pool['frames']))
+    plt.figure()
+    plt.plot(danceability)
+    plt.show()
 
 def extract_desciptors(audio,
                        frame_size = 44100 * 60,
@@ -89,7 +84,7 @@ if(__name__ == "__main__"):
                         help="Path where to store the data frame")
 
     args = parser.parse_args()
-    logging.basicConfig(level=logging.DEBUG, stream=sys.stdout)
+    logging.basicConfig(level=logging.INFO, stream=sys.stdout)
 
     main(
         input_path=args.input_path,
