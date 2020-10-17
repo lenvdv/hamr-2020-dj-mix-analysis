@@ -23,13 +23,26 @@
 </head>
 <body>
 	<header></header>
-	<main>
+	<main class="container">
 		<section class="jumbotron text-center">
 			<div class="container">
 				<h1>DJ mix analyzer</h1>
-				<p>DJ mix analyzer prototype for HAMR @ ISMIR 2020.</p>
+				<p>DJ mix analyzer prototype for <a href="https://www.ismir2020.net/hamr/">HAMR @ ISMIR 2020</a>.</p>
 			</div>
-			<p>
+			<div class="container small text-muted mx-auto">
+				<small>
+					Upload a .wav or .mp3 mix.
+					The file will be processed, which might take a few minutes.
+					Then, the visualization of the mix will be shown below.
+				</small>
+				<small>
+					Click on the visualizations to jump the audio playback to that point in the mix.
+				</small>
+				<small>
+					Our code is on <a href="https://github.com/lenvdv/hamr-2020-dj-mix-analysis">GitHub</a>.
+				</small>
+			</div>
+			<div class="container">
 				<div class="center form-group">
 					<div class="custom-file">
 						<form method="POST" action="" enctype="multipart/form-data">
@@ -40,7 +53,7 @@
 						</form>
 					</div>
 				</div>
-			</p>
+			</div>
 		</section>
 
 		<section class="text-center">
@@ -68,8 +81,8 @@
 			{% endfor %}
 		</section>
 	</main>
-	<footer class="footer text-center">
-		<div class="container">
+	<footer class="footer">
+		<div class="container text-center">
 			<p style="text-muted">Created by Len Vande Veire, Raphaël Romero, Mickaël Zehren and Alex de Raadt.</p>
 			<p class="text-muted">Using icons from <a href="http://glyphicons.com/">http://glyphicons.com/</a></p>
 		</div>
