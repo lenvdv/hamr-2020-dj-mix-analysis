@@ -37,6 +37,15 @@ def main(input_path=None,
     danceability = np.array(danceability)
     logging.info(f'Danceability: {danceability.shape}')
 
+    result_df = pd.DataFrame()
+
+    result_df['danceability'] = danceability
+
+
+
+
+
+    import ipdb; ipdb.set_trace()
     plt.figure()
     plt.plot(danceability)
     plt.show()
@@ -62,6 +71,8 @@ def extract_desciptors(audio,
         features, features_frames = musex(frame_path)
         for descr in descriptors:
             result.loc[i, descr] = features[descr]
+
+
 
 def plot_audio(frame):
     frame = frame_gen.next()
@@ -92,46 +103,11 @@ def plot_audio(frame):
     toplot = energy_band_features / np.max(energy_band_features, axis=0)[np.newaxis, :]
     yhat = savgol_filter(toplot, 15, 3, axis=0)  # smooth the output a bit
 
-
-    plt.figure()
-    plt.plot(yhat)
-    # plt.plot(toplot, linestyle=':')
-    plt.show()
-
-    df = pd.DataFrame(yhat)
-    df.columns = ['ebf_1', 'ebf_2', 'ebf_3']
-
-
-
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(df,
-        x=df.index, y=[40, 60, 40, 10],
-        hoverinfo='x+y',
-        mode='lines',
-        line=dict(width=0.5, color='rgb(131, 90, 241)'),
-        stackgroup='one' # define stack group
-    ))
-    fig.add_trace(go.Scatter(
-        x=x, y=[20, 10, 10, 60],
-        hoverinfo='x+y',
-        mode='lines',
-        line=dict(width=0.5, color='rgb(111, 231, 219)'),
-        stackgroup='one'
-    ))
-    fig.add_trace(go.Scatter(
-        x=x, y=[40, 30, 50, 30],
-        hoverinfo='x+y',
-        mode='lines',
-        line=dict(width=0.5, color='rgb(184, 247, 212)'),
-        stackgroup='one'
-    ))
-
-    fig.update_layout(yaxis_range=(0, 100))
-    fig.show()
-
-    fig = px.line(df, x="year", y="lifeExp", color="continent", line_group="country", hover_name="country",
-            line_shape="spline", render_mode="svg")
-
+    #
+    # plt.figure()
+    # plt.plot(yhat)
+    # # plt.plot(toplot, linestyle=':')
+    # plt.show()
 
 
     # ===================================================
