@@ -14,56 +14,21 @@ document.addEventListener('DOMContentLoaded', function() {
     $("#audio-seek-forward")[0].addEventListener('click', () => {audioSeek(SEEK_AMOUNT)});
     $("#audio-seek-backward")[0].addEventListener('click', () => {audioSeek(-SEEK_AMOUNT)});
 
-    // Bind event handler to upload button
-    $("#file-input")[0].onchange = e => {uploadAudioFileFromMenu(e.target, null)};
+    // If it exists, bind javascript to plotly
+    var myPlot = $('.plotly-graph-div')[0];
+
+    console.log(myPlot)
+
+    myPlot.on('plotly_click', function(data){
+        var pts = '';
+        for(var i=0; i < data.points.length; i++){
+            pts = 'x = '+data.points[i].x +'\ny = '+
+                data.points[i].y.toPrecision(4) + '\n\n';
+        }
+        console.log(pts)
+        alert('Closest point clicked:\n\n'+pts);
+    });
 });
-
-function uploadAudioFileFromMenu(fileContainer, onLoadExtractor) {
-    let reader = new FileReader();
-    var blob;
-
-    blob = fileContainer.files[0]
-
-    reader.readAsBinaryString(blob);
-    checkUploadFileExtension(blob);
-
-    // if ((blob.size / 1024 / 1024) > FILE_UPLOAD_SIZE_LIMIT) {
-    //     alert("Too big file to process! Please a upload a audio file less than " + FILE_UPLOAD_SIZE_LIMIT + "mb!");
-    //     throw "Excedees maximum upload file size limit " + FILE_UPLOAD_SIZE_LIMIT + "mb!";
-    // }
-   
-    addToAudioPlayer(blob);
-    getTempoAsync(URL.createObjectURL(blob))
-    // if (myAppSettings.audioLoaded) { removeAudioButtons() };
-  
-    // var blobUrl = URL.createObjectURL(blob);
-    // here we do the feature extraction and plotting offline using the callback function
-    // onLoadExtractor(blobUrl);
-}
-
-function checkUploadFileExtension(blob, allowedExtensions=["wav", "mp3", 'ogg']) {
-    var filename_split = blob.name.split(".")
-    var fileExt = filename_split[filename_split.length - 1];
-    fState = $.inArray(fileExt, allowedExtensions) > -1;
-    if (!fState) {
-        alert('Incompatible audio file format! Only the following file formats are supported at the moment: \n [' + allowedExtensions.join(", ") + ', ]');
-        throw "uploaded un-supported audio file format";
-    }
-}
-
-function addSourceToAudioPlayer(url) {
-    $("#audio-source").attr("src", url);
-    $("#audio-div")[0].pause();
-    $("#audio-div")[0].load();
-    $("#audio-div")[0].oncanplaythrough = $("#audio-div")[0].pause();
-    // myAppSettings.audioLoaded = true;
-}
-
-
-function addToAudioPlayer(blob) {
-    var blobUrl = URL.createObjectURL(blob);
-    addSourceToAudioPlayer(blobUrl);
-}
 
 function audioSeek(amount){
     console.log('Current time of audio: ' + audioplayer.currentTime);
