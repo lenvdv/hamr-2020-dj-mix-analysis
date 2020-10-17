@@ -28,9 +28,9 @@ def main(input_path=None,
     # Declare audio loading stream and related parameters
     # ================================================
 
-    frame_length = sample_rate * 24
-    hop_length = sample_rate * 8
-    block_length = 5
+    frame_length = sample_rate * 60
+    hop_length = sample_rate * 5
+    block_length = 5 * 4
     # Load the audio as a stream
     stream = librosa.stream(file,
                             block_length=block_length,
@@ -44,9 +44,13 @@ def main(input_path=None,
     # ================================================
 
     energy_band_params = [
-        {'sampleRate' : sample_rate, 'startCutoffFrequency' : 20, 'stopCutoffFrequency' : 200},
-        {'sampleRate' : sample_rate, 'startCutoffFrequency' : 200, 'stopCutoffFrequency' : 1000},
-        {'sampleRate' : sample_rate, 'startCutoffFrequency' : 1000, 'stopCutoffFrequency' : 2000},
+        {'sampleRate' : sample_rate, 'startCutoffFrequency' : 20, 'stopCutoffFrequency' : 100},
+        {'sampleRate' : sample_rate, 'startCutoffFrequency' : 100, 'stopCutoffFrequency' : 200},
+        {'sampleRate' : sample_rate, 'startCutoffFrequency' : 200, 'stopCutoffFrequency' : 800},
+        {'sampleRate' : sample_rate, 'startCutoffFrequency' : 800, 'stopCutoffFrequency' : 2000},
+        {'sampleRate' : sample_rate, 'startCutoffFrequency' : 2000, 'stopCutoffFrequency' : 5000},
+        {'sampleRate' : sample_rate, 'startCutoffFrequency' : 5000, 'stopCutoffFrequency' : 8000},
+        {'sampleRate' : sample_rate, 'startCutoffFrequency' : 8000, 'stopCutoffFrequency' : 22050},
     ]
 
     def hz_to_bin(f, n_bins, sr):
@@ -106,7 +110,7 @@ def main(input_path=None,
     df = pd.DataFrame(data=toplot,
                      columns =  ['ebf_1', 'ebf_2', 'ebf_3'])
 
-    plot_data(df).to_html()
+    plot_data(df).to_html(output_path)
 
     #
     # plt.figure()
