@@ -132,7 +132,7 @@ def plot_data(df,
     fig.update_layout(yaxis_range=(0, 1))
 
     with open (output_path, 'w') as f:
-        f.write(fig.to_html())
+        f.write(fig.to_html(full_html=False))
     print("Done! Result saved into file {}".format(output_path))
 
     return output_path

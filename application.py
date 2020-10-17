@@ -24,9 +24,15 @@ def upload_file():
     uploaded_file = request.files['file']
     if uploaded_file.filename != '':
         filepath = os.path.join(app.config['UPLOAD_PATH'], uploaded_file.filename)
+        out_filepath = os.path.join(app.config['UPLOAD_PATH'], os.path.splitext(uploaded_file.filename)[0]+'.html')
         uploaded_file.save(filepath)
-        output_path = process_file(filepath, app.config['UPLOAD_PATH'])
-    return render_template('index.html', data_visualization=f'/uploads/{os.path.basename(output_path)}', audio_url=f'/uploads/{uploaded_file.filename}')
+        output_path = process_file(filepath, out_filepath)
+    out_filepath = os.path.join(app.config['UPLOAD_PATH'], os.path.splitext(uploaded_file.filename)[0]+'.html')
+    with open(out_filepath, 'r') as out_file:
+        viz = out_file.read()
+    return render_template('index.html',
+                           data_visualization=viz,
+                           audio_url=f'/uploads/{uploaded_file.filename}')
     # return redirect(url_for('index', viz=str(yhat), audio_url=f'/uploads/{uploaded_file.filename}'))
 
 # @app.route('/get-result')
