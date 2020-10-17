@@ -13,7 +13,7 @@ from essentia.streaming import *  # Use streaming mode to deal with long files (
 from pylab import plot, show, figure, imshow
 from scipy.signal import savgol_filter
 import pandas as pd
-
+import plotly.express as px
 import plotly.graph_objs as go
 
 
@@ -107,10 +107,9 @@ def main(input_path=None,
 
 
 
-    df = pd.DataFrame(data=toplot,
-                     columns =  ['ebf_1', 'ebf_2', 'ebf_3'])
+    df = pd.DataFrame(data=toplot)
 
-    plot_data(df).to_html(output_path)
+    plot_data(df, output_path)
 
     #
     # plt.figure()
@@ -120,36 +119,42 @@ def main(input_path=None,
     #
 
 
-def plot_data(df):
+def plot_data(df,
+              output_path,
+              colorscale=px.colors.sequential.Cividis_r):
 
+    print("Plotting the features....")
     fig = go.Figure()
-
-    fig.add_trace(go.Scatter(
-        x=df.index, y=df['ebf_1'],
-        hoverinfo='x+y',
-        mode='lines',
-        line=dict(width=0.5, color='rgb(131, 90, 241)'),
-        stackgroup='one', # define stack group,
-        name="Energy Band Level 1"
-    ))
-    fig.add_trace(go.Scatter(
-        x=df.index, y=df['ebf_2'],
-        hoverinfo='x+y',
-        mode='lines',
-        line=dict(width=0.5, color='rgb(111, 231, 219)'),
-        stackgroup='one',
-        name = "Energy Band Level 2"
-    ))
-    fig.add_trace(go.Scatter(
-        x=df.index, y=df['ebf_3'],
-        hoverinfo='x+y',
-        mode='lines',
-        line=dict(width=0.5, color='rgb(184, 247, 212)'),
-        stackgroup='one',
-        name = "Energy Band Level"))
+    for i, (key, descr) in enumerate(df.iteritems()):
+        fig.add_trace(go.Scatter(
+            x=df.index, y=descr,
+            hoverinfo='x+y',
+            mode='lines',
+            line=dict(width=0.5, color=colorscale[i]),
+            stackgroup='one', # define stack group,
+            name="Energy Band Level {}".format(i)
+        ))
+    # fig.add_trace(go.Scatter(
+    #     x=df.index, y=df['ebf_2'],
+    #     hoverinfo='x+y',
+    #     mode='lines',
+    #     line=dict(width=0.5, color=2),
+    #     stackgroup='one',
+    #     name = "Energy Band Level 2"
+    # ))
+    # fig.add_trace(go.Scatter(
+    #     x=df.index, y=df['ebf_3'],
+    #     hoverinfo='x+y',
+    #     mode='lines',
+    #     line=dict(width=0.5, color=3),
+    #     stackgroup='one',
+    #     name = "Energy Band Level"))
 
     fig.update_layout(yaxis_range=(0, 1))
-    fig.show()
+
+    with open (output_path, 'w') as f:
+        f.write(fig.to_html())
+    print("Done! Result saved into file {}".format(output_path))
 
 
 
@@ -159,7 +164,7 @@ if(__name__ == "__main__"):
                         default='data/test_frame.mp3',
                         help="Path of the audio files")
     parser.add_argument('-o', '--output_path',
-                        default='data/output.csv',
+                        default='data/output.html',
                         help="Path where to store the data frame")
 
     args = parser.parse_args()
