@@ -13,8 +13,7 @@ from essentia.streaming import *  # Use streaming mode to deal with long files (
 from pylab import plot, show, figure, imshow
 from scipy.signal import savgol_filter
 
-def main(input_path=None,
-         output_path=None):
+def process_file(input_path=None):
 
     file = input_path
     sample_rate = librosa.get_samplerate(file)
@@ -82,6 +81,8 @@ def main(input_path=None,
         for j, n_start in enumerate(range(0,len(y_block), hop_length)):
             if j == 0 and i % 5 == 0:
                 t = (j * hop_length + i * block_length * hop_length)/(60*sample_rate)
+                print(
+                    f'Processing from minute {t:.0f}.')
                 logging.info(
                     f'Processing from minute {t:.0f}.')
             # Select the current audio frame
@@ -101,13 +102,15 @@ def main(input_path=None,
     toplot = toplot / np.sum(toplot, axis=1)[:, np.newaxis]
     yhat = savgol_filter(toplot, 61, 3, axis=0)  # smooth the output a bit
 
-    plt.figure()
-    plt.plot(yhat)
-    plt.show()
+    # plt.figure()
+    # plt.plot(yhat)
+    # plt.show()
+    #
+    # plt.figure()
+    # plt.plot(toplot)
+    # plt.show()
 
-    plt.figure()
-    plt.plot(toplot)
-    plt.show()
+    return yhat
 
 
 
@@ -121,7 +124,7 @@ if(__name__ == "__main__"):
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO, stream=sys.stdout)
 
-    main(
+    process_file(
         input_path=args.input_path,
         output_path=args.output_path
     )
