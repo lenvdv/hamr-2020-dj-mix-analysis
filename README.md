@@ -10,14 +10,12 @@ flask run
 ```
 
 Then browse to [http://127.0.0.1:5000/](http://127.0.0.1:5000/).  
-Upload the mix you want to process in the. Note that this takes a while.
-Results will be plotted interactively. Click on the visualization to skip to the relevant part of the mix.
+Upload the mix you want to visualize; note that this takes a while (a few minutes for a two-hour mix).
+Results will be plotted in an interactive widget. Click on the visualization to skip to the relevant part of the mix.
 
-The app should look something like this:
+This is what the app looks like:
 
 ![Screenshot of the app](screenshot.png)
-
-Have fun!
 
 ---
 Created by Raphaël Romero, Mickaël Zehren, Alex de Raadt and Len Vande Veire.
