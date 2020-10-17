@@ -18,31 +18,32 @@
 	<!--Waveform visualization-->
 	<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/mediaelement/4.2.16/mediaelement-and-player.min.js"></script> -->
 	<script src="https://unpkg.com/wavesurfer.js"></script>
-	<script src="main.js"></script>
-	<script src="essentiaProxy.js"></script>
+	<script src="../static/main.js"></script>
+	<script src="../static/essentiaProxy.js"></script>
 </head>
 <body>
 	<header></header>
 	<main>
 		<section class="jumbotron text-center">
 			<div class="container">
-				<h1>DJ mix analyzer</h1>				
+				<h1>DJ mix analyzer</h1>
+				<p>DJ mix analyzer prototype for HAMR @ ISMIR 2020.</p>
 			</div>
-			<p class="lead text-muted">Some info here</p>
 			<p>
-				<button class="btn btn-primary" onclick="document.getElementById('file-input').click();">Upload DJ mix</button>
-				<input id="file-input" type="file" name="name" style="display: none;" />
+				<div class="center">
+				<form method="POST" action="" enctype="multipart/form-data">
+					<p><input type="file" class="" name="file" accept=".mp3,.wav"></p>
+					<p><input type="submit" class="btn btn-primary" value="Submit"></p>
+				</form>
+				</div>
 			</p>
 		</section>
 
-		<center>
 		<section class="text-center">
 			<div id="audio-obj">
-	            <center>
-	                <audio id="audio-div" controls>
-	                    <source id="audio-source" src="" type="audio/wav"/>
-	                </audio>
-	            </center>
+				<audio id="audio-div" controls>
+					<source id="audio-source" src="{{audio_url}}" type="audio/wav"/>
+				</audio>
 	        </div>
 
 			<div class="controls">
@@ -54,10 +55,18 @@
 	            </button>
 	        </div>
         </section>
-        </center>
+
+		<section>
+			<div id="data-visualization">
+				{{data_visualization | safe}}
+			</div>
+		</section>
 	</main>
-	<footer class="text-center">
-		<p class="text-muted">Using icons from <a href="http://glyphicons.com/">http://glyphicons.com/</a></p>
+	<footer class="footer text-center">
+		<div class="container">
+			<p style="text-muted">Created by Len Vande Veire, Raphaël Romero, Mickaël Zehren and Alex de Raadt.</p>
+			<p class="text-muted">Using icons from <a href="http://glyphicons.com/">http://glyphicons.com/</a></p>
+		</div>
 	</footer>
 </body>
 </html>
