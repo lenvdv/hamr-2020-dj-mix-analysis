@@ -15,22 +15,31 @@ document.addEventListener('DOMContentLoaded', function() {
     $("#audio-seek-backward")[0].addEventListener('click', () => {audioSeek(-SEEK_AMOUNT)});
 
     // If it exists, bind javascript to plotly
-    var myPlot = $('.plotly-graph-div')[0];
+    var plotlyPlots = $('.plotly-graph-div');
 
-    console.log(myPlot)
-
-    myPlot.on('plotly_click', function(data){
-        var pts = '';
-        for(var i=0; i < data.points.length; i++){
-            pts = 'x = '+data.points[i].x +'\ny = '+
-                data.points[i].y.toPrecision(4) + '\n\n';
-        }
-        console.log(pts)
-        alert('Closest point clicked:\n\n'+pts);
-    });
+    for(var i=0; i<plotlyPlots.length; i++){
+        let p = plotlyPlots[i];
+        p.on('plotly_click', function(data){
+            var x = data.points[0].x
+            console.log('Clicked on '+x);
+            audioJumpTo(x);
+        });
+    }
 });
 
+function audioJumpTo(time_as_ratio){
+    // Jump to a time in the audio
+    //   time_to_ratio should be a _relative_ starting point,
+    //   0.0 being the start of the audio, 0.5 being halfway, 1.0 being the end.
+    var time = time_as_ratio * audioplayer.duration;
+    console.log('Current time of audio: ' + audioplayer.currentTime);
+    console.log('Duration of audio: ' + audioplayer.duration);
+    audioplayer.currentTime = time;
+    console.log('Set time of audio to ' + audioplayer.currentTime);
+}
+
 function audioSeek(amount){
+    // Jump forwards or backwards in the music by increments of "amount" seconds. Amount can be negative.
     console.log('Current time of audio: ' + audioplayer.currentTime);
     audioplayer.currentTime += amount; 
     console.log('Set time of audio to ' + audioplayer.currentTime);
