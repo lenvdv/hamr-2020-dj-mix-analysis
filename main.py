@@ -1,20 +1,23 @@
+import argparse
 import essentia
-from essentia.standard import *
+import logging
+import matplotlib.pyplot as plt
+import numpy as np
 import os
 import sys
 import time
-import numpy as np
+
+from essentia.standard import *
 from pylab import plot, show, figure, imshow
-import matplotlib.pyplot as plt
-import argparse
 
 
 def main(input_path=None,
          output_path=None):
-    data_path = "data"
-    audio_files = os.listdir("data")
-    file = os.path.join(data_path, audio_files[0])
+
+    audio_files = os.listdir(input_path)
+    file = os.path.join(input_path, audio_files[0])
     sample_rate = 44100
+    logging.info(f'Starting analysis of {file}')
 
     # Loading
     t0 = time.time()
@@ -24,8 +27,8 @@ def main(input_path=None,
     # and then we actually perform the loading:
     audio = loader()
 
-    print("Audio loaded, time elapsed: {} ".format(time.time() - t0))
-    print("Duration of the audio file {} minutes".format(audio.shape[0] / (sample_rate * 60)))
+    logging.info("Audio loaded, time elapsed: {} ".format(time.time() - t0))
+    logging.info("Duration of the audio file {} minutes".format(audio.shape[0] / (sample_rate * 60)))
 
 
 def extract_desciptors(audio,
@@ -73,6 +76,7 @@ if(__name__ == "__main__"):
                         help="Path where to store the data frame")
 
     args = parser.parse_args()
+    logging.basicConfig(level=logging.DEBUG, stream=sys.stdout)
 
     main(
         input_path=args.input_path,
