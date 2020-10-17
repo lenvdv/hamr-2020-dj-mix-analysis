@@ -24,10 +24,9 @@ def upload_file():
     uploaded_file = request.files['file']
     if uploaded_file.filename != '':
         filepath = os.path.join(app.config['UPLOAD_PATH'], uploaded_file.filename)
-        out_filepath = os.path.join(app.config['UPLOAD_PATH'], os.path.splitext(uploaded_file.filename)[0]+'.html')
+        out_dir = app.config['UPLOAD_PATH']
         uploaded_file.save(filepath)
-        output_path = process_file(filepath, out_filepath)
-    out_filepath = os.path.join(app.config['UPLOAD_PATH'], os.path.splitext(uploaded_file.filename)[0]+'.html')
+        out_filepath = process_file(filepath, out_dir)
     with open(out_filepath, 'r') as out_file:
         viz = out_file.read()
     return render_template('index.html',
