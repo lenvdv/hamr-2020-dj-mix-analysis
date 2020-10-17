@@ -7,7 +7,9 @@ import numpy as np
 import os
 import sys
 import time
-
+import plotly.express as px
+import pandas as pd
+import plotly.graph_objs as go
 from essentia.standard import *
 from essentia.streaming import *  # Use streaming mode to deal with long files (mixes)
 from pylab import plot, show, figure, imshow
@@ -67,20 +69,84 @@ def plot_audio(frame):
 
     plt.rcParams['figure.figsize'] = (15, 6) # set plot sizes to something larger than default
 
+    # Read the librosa docs to understand how the blocks and frames relate to each other:
+    # https://librosa.org/blog/2019/07/29/stream-processing/#Blocks
+    for i, y_block in enumerate(stream):
+        for j, n_start in enumerate(range(0,len(y_block), hop_length)):
+            if j == 0 and i % 5 == 0:
+                logging.info(
+                    f'Processing from minute {(j * hop_length + i * block_length * hop_length)/(60*sample_rate)}.')
+            # Select the current audio frame
+            y_frame = y_block[..., n_start:n_start+hop_length]
+            # Calculate the STFT power spectrogram for this audio frame
+            S = np.abs(librosa.stft(y_frame))**2
+            # Calculate the energy in each of the predefined energy bands
+            energy_band_features.append([e(S) for e in energy_band_extractors])
+    # Back to a numpy array
+    energy_band_features = np.array(energy_band_features)
 
-    timestamps = np.arange(frame.shape[0]) / 44100
-    plot(timestamps, frame)
+    # ================================================
+    # Plotting
+    # ================================================
 
-    plt.title("This is how the first 60 seconds of this audio looks like:")
-    plt.xlabel("Time")
-    show() # unnecessary if you started "ipython --pylab"
+    toplot = energy_band_features / np.max(energy_band_features, axis=0)[np.newaxis, :]
+    yhat = savgol_filter(toplot, 15, 3, axis=0)  # smooth the output a bit
+
+
+    plt.figure()
+    plt.plot(yhat)
+    # plt.plot(toplot, linestyle=':')
+    plt.show()
+
+    df = pd.DataFrame(yhat)
+    df.columns = ['ebf_1', 'ebf_2', 'ebf_3']
+
+
+
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(df,
+        x=df.index, y=[40, 60, 40, 10],
+        hoverinfo='x+y',
+        mode='lines',
+        line=dict(width=0.5, color='rgb(131, 90, 241)'),
+        stackgroup='one' # define stack group
+    ))
+    fig.add_trace(go.Scatter(
+        x=x, y=[20, 10, 10, 60],
+        hoverinfo='x+y',
+        mode='lines',
+        line=dict(width=0.5, color='rgb(111, 231, 219)'),
+        stackgroup='one'
+    ))
+    fig.add_trace(go.Scatter(
+        x=x, y=[40, 30, 50, 30],
+        hoverinfo='x+y',
+        mode='lines',
+        line=dict(width=0.5, color='rgb(184, 247, 212)'),
+        stackgroup='one'
+    ))
+
+    fig.update_layout(yaxis_range=(0, 100))
+    fig.show()
+
+    fig = px.line(df, x="year", y="lifeExp", color="continent", line_group="country", hover_name="country",
+            line_shape="spline", render_mode="svg")
+
+
+
+    # ===================================================
+    # Pandas dataframe
+    #================================================
+
 
 
 if(__name__ == "__main__"):
     parser = argparse.ArgumentParser(description="Analyze dj mix")
     parser.add_argument('-i', '--input_path',
+                        default='data/test_frame.mp3',
                         help="Path of the audio files")
     parser.add_argument('-o', '--output_path',
+                        default='data/output.csv',
                         help="Path where to store the data frame")
 
     args = parser.parse_args()
