@@ -15,15 +15,16 @@ document.addEventListener('DOMContentLoaded', function() {
     $("#audio-seek-backward")[0].addEventListener('click', () => {audioSeek(-SEEK_AMOUNT)});
 
     // If it exists, bind javascript to plotly
-    var myPlot = $('.plotly-graph-div')[0];
+    var plotlyPlots = $('.plotly-graph-div');
 
-    console.log(myPlot)
-
-    myPlot.on('plotly_click', function(data){
-        var x = data.points[0].x
-        console.log('Clicked on '+x);
-        audioJumpTo(x);
-    });
+    for(var i=0; i<plotlyPlots.length; i++){
+        let p = plotlyPlots[i];
+        p.on('plotly_click', function(data){
+            var x = data.points[0].x
+            console.log('Clicked on '+x);
+            audioJumpTo(x);
+        });
+    }
 });
 
 function audioJumpTo(time_as_ratio){
