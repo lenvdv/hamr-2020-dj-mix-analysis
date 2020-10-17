@@ -77,8 +77,9 @@ def main(input_path=None,
     for i, y_block in enumerate(stream):
         for j, n_start in enumerate(range(0,len(y_block), hop_length)):
             if j == 0 and i % 5 == 0:
+                t = (j * hop_length + i * block_length * hop_length)/(60*sample_rate)
                 logging.info(
-                    f'Processing from minute {(j * hop_length + i * block_length * hop_length)/(60*sample_rate)}.')
+                    f'Processing from minute {t:.0f}.')
             # Select the current audio frame
             y_frame = y_block[..., n_start:n_start+hop_length]
             # Calculate the STFT power spectrogram for this audio frame
@@ -91,8 +92,9 @@ def main(input_path=None,
     # ================================================
     # Plotting
     # ================================================
-    
+
     toplot = energy_band_features / np.max(energy_band_features, axis=0)[np.newaxis, :]
+    toplot = toplot / np.sum(toplot, axis=1)[:, np.newaxis]
     yhat = savgol_filter(toplot, 15, 3, axis=0)  # smooth the output a bit
 
     plt.figure()
