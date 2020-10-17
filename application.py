@@ -13,7 +13,7 @@ executor = ThreadPoolExecutor(2)
 
 @app.route('/')
 def index():
-    return render_template('index.html', data_visualization='', audio_url='')
+    return render_template('index.html', visualizations=[], audio_url='')
 
 @app.route('/', methods=['POST'])
 def upload_file():
@@ -26,11 +26,15 @@ def upload_file():
         filepath = os.path.join(app.config['UPLOAD_PATH'], uploaded_file.filename)
         out_dir = app.config['UPLOAD_PATH']
         uploaded_file.save(filepath)
-        out_filepath = process_file(filepath, out_dir)
-        with open(out_filepath, 'r') as out_file:
-            viz = out_file.read()
+        out_filepaths = process_file(filepath, out_dir)
+        visualisations = []
+        for f in out_filepaths:
+            print(f)
+            with open(f, 'r') as out_file:
+                visualisations.append(out_file.read())
+        print()
         return render_template('index.html',
-                               data_visualization=viz,
+                               visualizations=visualisations,
                                audio_url=f'/uploads/{uploaded_file.filename}')
     else:
         return redirect(url_for('index'))

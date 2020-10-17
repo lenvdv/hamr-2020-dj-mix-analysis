@@ -61,9 +61,11 @@
         </section>
 
 		<section>
-			<div id="data-visualization">
-				{{data_visualization | safe}}
-			</div>
+			{% for vis in visualizations %}
+				<div id="data-visualization">
+					{{vis | safe}}
+				</div>
+			{% endfor %}
 		</section>
 	</main>
 	<footer class="footer text-center">

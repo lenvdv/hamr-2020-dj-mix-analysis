@@ -27,15 +27,16 @@ def process_file(
     file_prefix = input_path.split(".wav")[0]
     if not os.path.exists(output_path):
         os.makedirs(output_path)
-    # 
-    # spectral_complexity_df = extract_spectral_complexity(input_path)
-    # plot_spectral_comp(spectral_complexity_df, outpath=os.path.join(output_path, "spectral_comp.html"))
+
+    spectral_complexity_df = extract_spectral_complexity(input_path)
+    output_file_sc = os.path.join(output_path, "spectral_comp.html")
+    plot_spectral_comp(spectral_complexity_df, outpath=output_file_sc)
 
     energy_band_df = extract_energy_bands(input_path)
-    output_file = os.path.join(output_path, "energy_band.html")
-    plot_energy_band(energy_band_df, outpath=output_file)
+    output_file_energy = os.path.join(output_path, "energy_band.html")
+    plot_energy_band(energy_band_df, outpath=output_file_energy)
 
-    return output_file
+    return [output_file_energy, output_file_sc]
     #
     # # Loudness
     # loudness_df = extract_loudness(input_path)
